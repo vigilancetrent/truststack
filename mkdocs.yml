@@ -1,0 +1,87 @@
+site_name: Trust Stack for Agent Apps
+site_description: Because agent failures are trust failures. Independently installable Python libraries that make AI agents reliable, auditable, and accountable.
+site_url: https://vigilancetrent.github.io/truststack/
+site_author: Trust Stack
+repo_name: vigilancetrent/truststack
+repo_url: https://github.com/vigilancetrent/truststack
+copyright: "Trust Stack — Because agent failures are trust failures."
+
+docs_dir: docs
+
+theme:
+  name: material
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - navigation.indexes
+    - content.code.copy
+    - content.code.annotate
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Architecture: architecture.md
+  - Libraries:
+      - agent-clock: api/truststack-agent-clock.md
+      - shipped-or-not: api/truststack-shipped-or-not.md
+      - task-dedupe: api/truststack-task-dedupe.md
+      - entity-canon: api/truststack-entity-canon.md
+      - meta-token-vault: api/truststack-meta-token-vault.md
+  - Database Schemas: database.md
+  - Roadmap: roadmap.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/vigilancetrent/truststack
+      name: GitHub
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/truststack-core/
+      name: PyPI

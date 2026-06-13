@@ -33,6 +33,9 @@ dev = [
     "moto>=5.0",
     "rapidfuzz>=3.9",
 ]
+docs = [
+    "mkdocs-material>=9.5",
+]
 
 # ── Shared tooling (inherited by every package) ─────────────────────────────
 [tool.ruff]

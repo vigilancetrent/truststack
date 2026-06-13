@@ -12,23 +12,23 @@ flowchart TB
         A[LLM call] & D[Deploy claim] & T[Task write] & E[Entity write] & K[Token use]
     end
 
-    A --> AC[agent-clock\ninject trusted time]
-    D --> SN[shipped-or-not\nverify deployment]
-    T --> TD[task-dedupe\nblock duplicates]
-    E --> EC[entity-canon\ncanonicalize names]
-    K --> MV[meta-token-vault\nmanage tokens]
+    A --> AC[agent-clock<br>inject trusted time]
+    D --> SN[shipped-or-not<br>verify deployment]
+    T --> TD[task-dedupe<br>block duplicates]
+    E --> EC[entity-canon<br>canonicalize names]
+    K --> MV[meta-token-vault<br>manage tokens]
 
     AC & SN & TD & EC & MV --> CORE
 
     subgraph CORE["truststack-core (shared contract)"]
         direction LR
-        C1["TrustComponent\nhealth_check / metrics / version"]
-        C2["truststack.logging\nstructured logs"]
-        C3["truststack.events\ntrust event bus"]
-        C4["truststack.observability\nOpenTelemetry"]
+        C1["TrustComponent<br>health_check / metrics / version"]
+        C2["truststack.logging<br>structured logs"]
+        C3["truststack.events<br>trust event bus"]
+        C4["truststack.observability<br>OpenTelemetry"]
     end
 
-    CORE --> OUT["Auditable outcome\n(logs · spans · metrics · events)"]
+    CORE --> OUT["Auditable outcome<br>(logs · spans · metrics · events)"]
 ```
 
 ## The shared contract (`truststack-core`)
@@ -53,7 +53,7 @@ class TrustComponent(Protocol):
 
 ## Per-library shape
 
-```
+```text
 packages/<lib>/
 ├── pyproject.toml          # name = "truststack-<lib>"; depends on truststack-core
 ├── README.md               # problem · install · usage · API
@@ -78,4 +78,3 @@ packages/<lib>/
    and a `TrustEvent`, and updates metrics.
 5. **Independently installable** — no library imports another library; the only
    shared dependency is `truststack-core`.
-```

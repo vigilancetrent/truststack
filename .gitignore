@@ -37,3 +37,6 @@ coverage.xml
 .DS_Store
 Thumbs.db
 .claude/
+
+# MkDocs build output
+site/
