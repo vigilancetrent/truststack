@@ -1,6 +1,11 @@
 name: Publish
 
-# Tag a release as "<package>-v<version>", e.g. "agent-clock-v1.0.0".
+# Release a single package by pushing a tag of the form:
+#   <package-dir>-v<version>      e.g.  truststack-agent-clock-v0.1.0
+# The package dir basename equals the PyPI distribution name.
+#
+# Publishing uses PyPI Trusted Publishing (OIDC) — no API token is stored.
+# A "pending publisher" must be configured once per project on PyPI; see RELEASING.md.
 on:
   push:
     tags:
@@ -9,27 +14,41 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    environment: pypi
+    environment:
+      name: pypi
+      url: https://pypi.org/p/${{ steps.meta.outputs.dist }}
     permissions:
-      id-token: write # PyPI Trusted Publishing (OIDC) — no API token needed
+      id-token: write # OIDC token for PyPI Trusted Publishing — no secrets needed
     steps:
       - uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Resolve package directory from tag
-        id: pkg
+      - name: Resolve package and verify version matches the tag
+        id: meta
         shell: bash
         run: |
-          # tag form: <dir>-v<version>  ->  packages/<dir>
           tag="${GITHUB_REF_NAME}"
-          dir="${tag%-v*}"
-          echo "dir=packages/${dir}" >> "$GITHUB_OUTPUT"
-          echo "Resolved package directory: packages/${dir}"
+          dist="${tag%-v*}"          # truststack-agent-clock
+          version="${tag##*-v}"      # 0.1.0
+          pkgdir="packages/${dist}"
+          if [ ! -f "${pkgdir}/pyproject.toml" ]; then
+            echo "::error::No package directory '${pkgdir}' for tag '${tag}'"
+            exit 1
+          fi
+          declared=$(grep -m1 -E '^version = ' "${pkgdir}/pyproject.toml" | sed -E 's/version = "([^"]+)".*/\1/')
+          if [ "${declared}" != "${version}" ]; then
+            echo "::error::Tag version '${version}' != ${pkgdir} version '${declared}'"
+            exit 1
+          fi
+          echo "dist=${dist}" >> "$GITHUB_OUTPUT"
+          echo "Releasing ${dist} ${version}"
 
-      - name: Build
-        run: uv build --package "$(basename ${{ steps.pkg.outputs.dir }})"
+      - name: Build the package
+        run: uv build --package "${{ steps.meta.outputs.dist }}"
 
-      - name: Publish to PyPI
-        run: uv publish
+      - name: Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
