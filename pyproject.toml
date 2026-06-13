@@ -63,6 +63,18 @@ addopts = "--strict-markers --import-mode=importlib"
 testpaths = ["packages"]
 pythonpath = []
 
+[tool.coverage.run]
+branch = true
+source_pkgs = [
+    "truststack",
+    "agent_clock",
+    "shipped_or_not",
+    "task_dedupe",
+    "entity_canon",
+    "meta_token_vault",
+]
+omit = ["**/tests/**", "**/examples/**"]
+
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",

@@ -27,7 +27,7 @@ jobs:
           enable-cache: true
 
       - name: Install workspace
-        run: uv sync --all-extras --dev
+        run: uv sync --all-packages
 
       - name: Lint (ruff)
         run: |
