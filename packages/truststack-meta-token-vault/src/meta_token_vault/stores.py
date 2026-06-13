@@ -56,11 +56,18 @@ class TokenStore(Protocol):
 
 
 def _select_active(tokens: list[Token], now: datetime | None = None) -> Token | None:
-    """Pick the most recently issued, non-expired token from ``tokens``."""
+    """Pick the most recently issued, non-expired token from ``tokens``.
+
+    Ties on ``issued_at`` (common on coarse-resolution clocks, e.g. Windows) are
+    broken deterministically in favour of the most recently *stored* token — the
+    last one in the store's ordering — so ``get_active`` never depends on
+    sub-millisecond timestamp differences.
+    """
     candidates = [t for t in tokens if not t.is_expired(now)]
     if not candidates:
         return None
-    return max(candidates, key=lambda t: t.issued_at)
+    newest = max(t.issued_at for t in candidates)
+    return next(t for t in reversed(candidates) if t.issued_at == newest)
 
 
 def _encode_token(token: Token, encryptor: Encryptor) -> dict[str, Any]:
