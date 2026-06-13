@@ -1,0 +1,75 @@
+[project]
+name = "truststack-workspace"
+version = "0.1.0"
+description = "The Trust Stack for Agent Apps — monorepo workspace (not published)."
+requires-python = ">=3.11"
+license = "MIT"
+readme = "README.md"
+
+# This root project is a workspace container only; it is never published.
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+# Each package depends on truststack-core; resolve it from the workspace.
+[tool.uv.sources]
+truststack-core = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=5.0",
+    "pytest-httpx>=0.30",
+    "mypy>=1.11",
+    "ruff>=0.6",
+    "freezegun>=1.5",
+    # Optional extras exercised by tests + type-checked in CI.
+    "fastapi>=0.110",
+    "cryptography>=42",
+    "fakeredis>=2.23",
+    "moto>=5.0",
+    "rapidfuzz>=3.9",
+]
+
+# ── Shared tooling (inherited by every package) ─────────────────────────────
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["packages/*/src", "packages/*/tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "PIE", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# RUF012: test doubles legitimately use mutable class attributes without ClassVar.
+"**/tests/**" = ["B011", "RUF012"]
+"**/examples/**" = ["E402", "T201"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+warn_unused_ignores = false
+plugins = ["pydantic.mypy"]
+# Strict typing is enforced on shipped code; tests/examples are excluded.
+exclude = '/(tests|examples)/'
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "--strict-markers --import-mode=importlib"
+testpaths = ["packages"]
+pythonpath = []
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@(abc\\.)?abstractmethod",
+    "\\.\\.\\.",
+]
+fail_under = 95
+show_missing = true

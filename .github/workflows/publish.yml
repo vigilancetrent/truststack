@@ -1,0 +1,35 @@
+name: Publish
+
+# Tag a release as "<package>-v<version>", e.g. "agent-clock-v1.0.0".
+on:
+  push:
+    tags:
+      - "*-v*"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write # PyPI Trusted Publishing (OIDC) — no API token needed
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Resolve package directory from tag
+        id: pkg
+        shell: bash
+        run: |
+          # tag form: <dir>-v<version>  ->  packages/<dir>
+          tag="${GITHUB_REF_NAME}"
+          dir="${tag%-v*}"
+          echo "dir=packages/${dir}" >> "$GITHUB_OUTPUT"
+          echo "Resolved package directory: packages/${dir}"
+
+      - name: Build
+        run: uv build --package "$(basename ${{ steps.pkg.outputs.dir }})"
+
+      - name: Publish to PyPI
+        run: uv publish
