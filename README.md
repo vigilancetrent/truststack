@@ -6,10 +6,14 @@
 
 The infrastructure layer that makes AI agents **reliable, auditable, and accountable.**
 
+[![Docs](https://img.shields.io/badge/docs-vigilancetrent.github.io-4051b5?logo=materialformkdocs&logoColor=white)](https://vigilancetrent.github.io/truststack/)
+[![CI](https://github.com/vigilancetrent/truststack/actions/workflows/ci.yml/badge.svg)](https://github.com/vigilancetrent/truststack/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Typed](https://img.shields.io/badge/typed-mypy%20strict-2563eb)](https://mypy-lang.org/)
 [![Pydantic v2](https://img.shields.io/badge/pydantic-v2-e92063?logo=pydantic&logoColor=white)](https://docs.pydantic.dev/)
+
+**📖 Documentation: [vigilancetrent.github.io/truststack](https://vigilancetrent.github.io/truststack/)**
 
 </div>
 
@@ -94,11 +98,16 @@ truststack/
 This is a [uv](https://docs.astral.sh/uv/) workspace.
 
 ```bash
-uv sync                                   # install all packages + dev tools
-uv run pytest                             # run the whole suite
-uv run pytest --cov --cov-report=term     # with coverage
+uv sync --all-packages                    # install all packages + dev tools
+uv run pytest --cov --cov-report=term     # run the whole suite with coverage
 uv run ruff check . && uv run mypy packages
+uv run --group docs mkdocs serve          # preview the docs site locally
 ```
+
+## Documentation
+
+Full docs — guides, per-library API reference, architecture, and database schemas —
+are published at **[vigilancetrent.github.io/truststack](https://vigilancetrent.github.io/truststack/)**.
 
 ## License
 
